@@ -8,3 +8,4 @@ datetime
 prophet
 requests
 ta
+pandas_ta
