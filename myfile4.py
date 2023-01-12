@@ -17,7 +17,6 @@ from prophet.plot import plot_plotly
 import datetime
 import requests
 
-import talib 
 import ta
 yf.pdr_override()
 
