@@ -1,37 +1,19 @@
 import streamlit as st
+from streamlit_option_menu import option_menu
 
 import pandas as pd
-import numpy as np
-import seaborn as sns
-from scipy import stats
 import yfinance as yf
 from yfinance.utils import auto_adjust
-import investpy as investpy
 
-from mpl_finance import candlestick_ohlc
-import matplotlib.dates as mpl_dates
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation 
-from matplotlib.gridspec import GridSpec
-import matplotlib.ticker as mticker
 from plotly import graph_objs as go
 import cufflinks as cf
 from plotly.subplots import make_subplots
 
 from datetime import date
-import math
 
 from prophet import Prophet
 from prophet.plot import plot_plotly
-from IPython.core.display import clear_output
-from matplotlib.widgets import MultiCursor
 
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.common.exceptions import NoSuchElementException
-import pandas as pd
 import datetime
 import requests
 
