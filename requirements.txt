@@ -1,0 +1,12 @@
+streamlit
+pandas
+numpy
+seaborn
+yfinance
+plotly
+cufflinks
+datetime
+prophet
+requests
+talib
+ta
