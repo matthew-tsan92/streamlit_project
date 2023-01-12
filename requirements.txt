@@ -7,5 +7,4 @@ cufflinks
 datetime
 prophet
 requests
-talib
 ta
