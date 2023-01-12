@@ -263,10 +263,11 @@ if selected == "Company indicators":
     st.line_chart(df_stock[['Adj Close','middle_band','upper_band','lower_band']])
 
     # MACD (Moving Average Convergence Divergence)
-    df_stock['macd'], df_stock['macd_diff'], df_stock['macdsignal'], df_stock['macdhist'] = ta.trend.MACD(df_stock['Adj Close'], window_fast=12, window_slow=26, window_sign=9)
+    df_stock['macd'] = ta.trend.macd(df_stock['Adj Close'], window_fast=12, window_slow=26)
+    df_stock['macdsignal'] = ta.trend.macd_signal(df_stock['Adj Close'], window_fast=12, window_slow=26, window_sign=9)
 
     st.header(f"Moving Average Convergence Divergence of {select_stocks}")
-    st.line_chart(df_stock[['macd','macd_diff','macdsignal']])
+    st.line_chart(df_stock[['macd','macdsignal']])
 
     # CCI (Commodity Channel Index)
     cci = ta.trend.cci(df_stock['High'], df_stock['Low'], df_stock['Close'])
