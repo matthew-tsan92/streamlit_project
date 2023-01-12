@@ -10,6 +10,7 @@ import cufflinks as cf
 from plotly.subplots import make_subplots
 
 from datetime import date
+from datetime import date
 
 from prophet import Prophet
 from prophet.plot import plot_plotly
@@ -17,49 +18,10 @@ from prophet.plot import plot_plotly
 import datetime
 import requests
 
-import streamlit as st
-import requests
-import os
-import sys
-import subprocess
-
-# check if the library folder already exists, to avoid building everytime you load the pahe
-if not os.path.isdir("/tmp/ta-lib"):
-
-    # Download ta-lib to disk
-    with open("/tmp/ta-lib-0.4.0-src.tar.gz", "wb") as file:
-        response = requests.get(
-            "http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz"
-        )
-        file.write(response.content)
-    # get our current dir, to configure it back again. Just house keeping
-    default_cwd = os.getcwd()
-    os.chdir("/tmp")
-    # untar
-    os.system("tar -zxvf ta-lib-0.4.0-src.tar.gz")
-    os.chdir("/tmp/ta-lib")
-    os.system("ls -la /app/equity/")
-    # build
-    os.system("./configure --prefix=/home/appuser")
-    os.system("make")
-    # install
-    os.system("make install")
-    # back to the cwd
-    os.chdir(default_cwd)
-    sys.stdout.flush()
-
-# add the library to our current environment
-from ctypes import *
-
-lib = CDLL("/home/appuser/lib/libta_lib.so.0.0.0")
-# import library
-try:
-    import talib
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "--global-option=build_ext", "--global-option=-L/home/appuser/lib/", "--global-option=-I/home/appuser/include/", "ta-lib"])
-finally:
-    import talib
+import talib
 import ta
+import pandas_ta as pta
+
 yf.pdr_override()
 
 #webpage title
@@ -368,3 +330,45 @@ if selected == "Stock Price Prediction":
     st.plotly_chart(fore_fig, use_container_width = True)
     fore_fig2 = m.plot_components(forecast, figsize=(8,4))
     st.write(fore_fig2)
+
+st.components.v1.html(
+    """
+    <!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/markets/" rel="noopener" target="_blank"><span class="blue-text">Markets today</span></a> by TradingView</div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+  {
+  "symbols": [
+    {
+      "proName": "FOREXCOM:SPXUSD",
+      "title": "S&P 500"
+    },
+    {
+      "proName": "FOREXCOM:NSXUSD",
+      "title": "US 100"
+    },
+    {
+      "proName": "FX_IDC:EURUSD",
+      "title": "EUR/USD"
+    },
+    {
+      "proName": "BITSTAMP:BTCUSD",
+      "title": "Bitcoin"
+    },
+    {
+      "proName": "BITSTAMP:ETHUSD",
+      "title": "Ethereum"
+    }
+  ],
+  "showSymbolLogo": true,
+  "colorTheme": "light",
+  "isTransparent": false,
+  "displayMode": "adaptive",
+  "locale": "en"
+}
+  </script>
+</div>
+<!-- TradingView Widget END -->
+    """
+)
