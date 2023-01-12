@@ -10,7 +10,6 @@ import cufflinks as cf
 from plotly.subplots import make_subplots
 
 from datetime import date
-from datetime import date
 
 from prophet import Prophet
 from prophet.plot import plot_plotly
@@ -32,7 +31,7 @@ layout="wide"
 #dashboard
 start_date = "2020-01-01"
 today = date.today().strftime("%Y-%m-%d")
-stocks = ("0857.HK", "0386.HK", "0467.HK", "0650.HK", "2386.HK", "2686.HK")
+stocks = ("0857.HK", "0386.HK", "0467.HK", "0650.HK", "2386.HK", "2686.HK", "^HSI")
 
 
 #Load dataset
@@ -52,8 +51,8 @@ def load_2nddata(stock):
 with st.sidebar:
     selected = option_menu(
         menu_title="Select a function to use",
-        options=["Homepage","Company Info","Company indicators","Company stock price comparison","Stock Price Prediction", "Next"],
-        icons=["house"]
+        options=["Homepage","Company Info","Company Indicators","Company Stock Return Comparison","Stock Price Prediction", "Next"],
+        icons=["house","book","graph-up","arrows-angle-contract","clock-history"]
     )
 
 
@@ -119,7 +118,7 @@ if selected == "Company Info":
 
         # Get the metrics needed for valuation
         currentPrice = data["financialData"]["currentPrice"]["raw"]
-        growth = data["earningsTrend"]["trend"][4][ "growth" ][ "raw" ] * 100
+        growth = data["earningsTrend"]["trend"][4]["growth"]["raw"] * 100
         peFWD = data["defaultKeyStatistics"]["forwardPE"]["raw"]
         epsFWD = data["defaultKeyStatistics"]["forwardEps"]["raw"]
         requiredRateOfReturn = 10.0
@@ -142,12 +141,12 @@ if selected == "Company Info":
         kpi10, kpi11, kpi12 = st.columns(3)
         kpi7.metric("Market Cap", data["price"]["marketCap"]["fmt"])
         kpi8.metric("EPS", "{:.2f}".format(futureEPS))
-        kpi9.metric("Future Price", "{:.2f}".format(futurePrice))
+        kpi9.metric("Current Price", "{:.2f}".format(currentPrice))
         kpi10.metric("Sticker Price", "{:.2f}".format(stickerPrice))
-        kpi11.metric("Current Price", "{:.2f}".format(currentPrice))
+        kpi11.metric("Future Price", "{:.2f}".format(futurePrice))
         kpi12.metric("Upside", "{:.2f}".format(upside))
 
-if selected == "Company indicators":
+if selected == "Company Indicators":
     with st.sidebar:
         select_stocks = st.selectbox("Please select stock to view", stocks)
     df_stock = load_data(select_stocks)
@@ -159,14 +158,14 @@ if selected == "Company indicators":
     value = 120,
     )
     ma1 = st.sidebar.number_input(
-    'Moving Average #1 Length',
+    'Moving Average No.1 Length',
     value = 10,
     min_value = 1,
     max_value = 120,
     step = 1,    
     )
     ma2 = st.sidebar.number_input(
-    'Moving Average #2 Length',
+    'Moving Average No.2 Length',
     value = 20,
     min_value = 1,
     max_value = 120,
@@ -241,10 +240,15 @@ if selected == "Company indicators":
     st.plotly_chart(fig,  use_container_width = True)
 
     ##Indicators (separate)
-    # Adjusted Close Price
     df_stock.set_index(['Date'], inplace=True)
+    # Adjusted Close Price
     st.header(f"Adjusted Close Price of {select_stocks}")
     st.line_chart(df_stock['Adj Close'])
+
+    # Crude Oil Price
+    df_clf = yf.download("CL=F", start_date , today, interval="1wk")
+    st.header(f"Adjusted Close Price of Crude Oil Feb 23")
+    st.line_chart(df_clf['Adj Close'])
 
     # SMA (Simple Moving Average)
     df_stock['SMA'] = pta.sma(df_stock['Adj Close'], timeperiod = 20)
@@ -269,12 +273,6 @@ if selected == "Company indicators":
     st.header(f"Moving Average Convergence Divergence of {select_stocks}")
     st.line_chart(df_stock[['macd','macdsignal']])
 
-    # CCI (Commodity Channel Index)
-    cci = ta.trend.cci(df_stock['High'], df_stock['Low'], df_stock['Close'])
-
-    st.header(f"Commodity Channel Index of {select_stocks}")
-    st.line_chart(cci)
-
     # RSI (Relative Strength Index)
     df_stock['RSI'] = pta.rsi(df_stock['Adj Close'], length=14)
 
@@ -289,20 +287,21 @@ if selected == "Company indicators":
 
 
 
-if selected == "Company stock price comparison":
+if selected == "Company Stock Return Comparison":
     with st.sidebar:
         stocks_compare = st.multiselect("Pick stocks to compare", stocks)
     start_date_menu = st.date_input("Select a start date", value=pd.to_datetime(start_date))
     end_date_menu = st.date_input("Select an end date", value=pd.to_datetime(today))
 
-    def relativeret(df):
+    def relative_return(df):
             rel = df.pct_change()
-            cumuret = (1+rel).cumprod() - 1
-            cumuret = cumuret.fillna(0)
-            return cumuret
+            cumul_return = (1+rel).cumprod() - 1
+            cumul_return = cumul_return.fillna(0)
+            return cumul_return
     
     if len(stocks_compare) > 0:
-        df_stock_compare = relativeret(yf.download(stocks_compare, start_date, today)["Adj Close"])
+        st.header(f"Return of {stocks_compare}")
+        df_stock_compare = relative_return(yf.download(stocks_compare, start_date, today)["Adj Close"])
         st.line_chart(df_stock_compare)
 
 
