@@ -3,10 +3,8 @@ from streamlit_option_menu import option_menu
 
 import pandas as pd
 import yfinance as yf
-from yfinance.utils import auto_adjust
 
 from plotly import graph_objs as go
-import cufflinks as cf
 from plotly.subplots import make_subplots
 
 from datetime import date
@@ -159,14 +157,14 @@ if selected == "Company Indicators":
     value = 120,
     )
     ma1 = st.sidebar.number_input(
-    'Moving Average No.1 Length',
+    'Moving Average No.1 Length (max 120)',
     value = 10,
     min_value = 1,
     max_value = 120,
     step = 1,    
     )
     ma2 = st.sidebar.number_input(
-    'Moving Average No.2 Length',
+    'Moving Average No.2 Length (max 120)',
     value = 20,
     min_value = 1,
     max_value = 120,
