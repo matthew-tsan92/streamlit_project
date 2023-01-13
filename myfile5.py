@@ -50,8 +50,8 @@ def load_2nddata(stock):
 #Sidebar
 with st.sidebar:
     selected = option_menu(
-        menu_title="Select a function to use",
-        options=["Homepage","Company Info","Company Indicators","Company Stock Return Comparison","Stock Price Prediction", "Next"],
+        menu_title="Select a page",
+        options=["Homepage","Company Info","Company Indicators","Company Stock Return Comparison","Stock Price Prediction"],
         icons=["house","book","graph-up","arrows-angle-contract","clock-history"]
     )
 
@@ -62,7 +62,8 @@ if selected == "Homepage":
     header = st.container()
     with header:
         st.title("Welcome!!")
-    st.markdown("Select an item from left panel to view")
+    st.markdown("This web app aims to include several functions for users to have a look at financial data of local crude oil companies.")
+    st.markdown("Select an item from the left panel to view.")
 
 
 if selected == "Company Info":
