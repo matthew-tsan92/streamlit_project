@@ -24,7 +24,7 @@ import pandas_ta as pta
 yf.pdr_override()
 
 #webpage title
-st.set_page_config(page_title="Oil Stock",
+st.set_page_config(page_title="HK Oil Stocks APP",
 layout="wide"
 )
 
@@ -111,7 +111,7 @@ if selected == "Company Info":
         kpi4.metric(label=select_stocks,value=closeprice_today,delta=price_delta)
         kpi5.metric("Website", data["assetProfile"]["website"])
 
-        st.header("Valuation")
+        st.header("Company Valuation")
         # Add space between sections
         st.markdown("", unsafe_allow_html=True)
         st.markdown("", unsafe_allow_html=True)  
@@ -124,7 +124,7 @@ if selected == "Company Info":
         requiredRateOfReturn = 10.0
         yearsToProject = 5
   
-        # Add controls
+        # User's input
         with st.sidebar:
             growth = st.number_input("Growth", value=growth, step = 1.0)
             peFWD = st.number_input("P/E", value=peFWD, step = 1.0)
@@ -332,4 +332,3 @@ if selected == "Stock Price Prediction":
     st.plotly_chart(fore_fig, use_container_width = True)
     fore_fig2 = m.plot_components(forecast, figsize=(8,4))
     st.write(fore_fig2)
-
